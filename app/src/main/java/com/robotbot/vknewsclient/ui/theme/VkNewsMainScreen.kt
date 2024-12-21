@@ -11,21 +11,18 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.robotbot.vknewsclient.MainViewModel
 import com.robotbot.vknewsclient.domain.FeedPost
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen() {
-
-    val feedPost = remember {
-        mutableStateOf(FeedPost())
-    }
-
+fun MainScreen(viewModel: MainViewModel) {
     Scaffold(
         bottomBar = {
             NavigationBar(
@@ -64,22 +61,16 @@ fun MainScreen() {
             }
         }
     ) {
+
+        val feedPost = viewModel.feedPost.observeAsState(FeedPost())
+
         PostCard(
             feedPost = feedPost.value,
             modifier = Modifier.padding(top = 50.dp, start = 8.dp, end = 8.dp),
-            onStatisticItemClickListener = { clickedItem ->
-                val oldStatistics = feedPost.value.statistics
-                val newStatistics = oldStatistics.toMutableList().apply {
-                    replaceAll { item ->
-                        if (item.type == clickedItem.type) {
-                            item.copy(count = item.count + 1)
-                        } else {
-                            item
-                        }
-                    }
-                }
-                feedPost.value = feedPost.value.copy(statistics = newStatistics)
-            }
+            onViewsClickListener = viewModel::incrementStatisticItem,
+            onShareClickListener = viewModel::incrementStatisticItem,
+            onCommentClickListener = viewModel::incrementStatisticItem,
+            onLikeClickListener = viewModel::incrementStatisticItem,
         )
     }
 }
