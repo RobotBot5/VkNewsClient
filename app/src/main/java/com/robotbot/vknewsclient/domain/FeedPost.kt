@@ -3,6 +3,7 @@ package com.robotbot.vknewsclient.domain
 import com.robotbot.vknewsclient.R
 
 data class FeedPost(
+    val id: Int,
     val communityTitle: String = "/dev/null",
     val communityAvatarResId: Int = R.drawable.post_comunity_thumbnail,
     val publicationDate: String = "14:00",
