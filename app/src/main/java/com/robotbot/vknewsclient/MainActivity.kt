@@ -10,14 +10,12 @@ import com.robotbot.vknewsclient.ui.theme.VkNewsClientTheme
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel by viewModels<MainViewModel>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             VkNewsClientTheme {
-                MainScreen(viewModel)
+                MainScreen()
             }
         }
     }
