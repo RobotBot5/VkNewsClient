@@ -1,5 +1,6 @@
 package com.robotbot.vknewsclient.ui.theme
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,14 +15,50 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.robotbot.vknewsclient.MainViewModel
+import com.robotbot.vknewsclient.domain.FeedPost
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     viewModel: MainViewModel,
     paddingValues: PaddingValues
 ) {
-    val feedPosts = viewModel.feedPosts.observeAsState(listOf())
+    val screenState = viewModel.state.observeAsState(HomeScreenState.Initial)
+
+    when(val state = screenState.value) {
+        is HomeScreenState.Posts -> {
+            FeedPosts(
+                viewModel = viewModel,
+                paddingValues = paddingValues,
+                posts = state.posts
+            )
+        }
+
+        is HomeScreenState.Comments -> {
+            CommentsScreen(
+                feedPost = state.feedPost,
+                comments = state.comments,
+                paddingValuesFromMainScreen = paddingValues,
+                onBackPressed = {
+                    viewModel.closeComments()
+                }
+            )
+            BackHandler {
+                viewModel.closeComments()
+            }
+        }
+        HomeScreenState.Initial -> {
+
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@Composable
+private fun FeedPosts(
+    viewModel: MainViewModel,
+    paddingValues: PaddingValues,
+    posts: List<FeedPost>
+) {
     LazyColumn(
         contentPadding = PaddingValues(
             top = paddingValues.calculateTopPadding(),
@@ -31,7 +68,7 @@ fun HomeScreen(
         ),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(feedPosts.value, key = { it.id }) { post ->
+        items(posts, key = { it.id }) { post ->
             val dismissState = rememberSwipeToDismissBoxState()
 
             if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
@@ -53,7 +90,7 @@ fun HomeScreen(
                         viewModel.incrementStatisticItem(post, it)
                     },
                     onCommentClickListener = {
-                        viewModel.incrementStatisticItem(post, it)
+                        viewModel.showComments(post)
                     },
                     onLikeClickListener = {
                         viewModel.incrementStatisticItem(post, it)

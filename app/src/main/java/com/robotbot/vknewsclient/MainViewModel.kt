@@ -4,10 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.robotbot.vknewsclient.domain.FeedPost
+import com.robotbot.vknewsclient.domain.PostComment
 import com.robotbot.vknewsclient.domain.StatisticItem
-import com.robotbot.vknewsclient.ui.theme.NavigationItem
+import com.robotbot.vknewsclient.ui.theme.HomeScreenState
 
 class MainViewModel : ViewModel() {
+
+    private val comments = mutableListOf<PostComment>().apply {
+        repeat(10) {
+            add(PostComment(it))
+        }
+    }
 
     private val initialList = mutableListOf<FeedPost>().apply {
         repeat(10) {
@@ -17,11 +24,24 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    private val _feedPosts = MutableLiveData<List<FeedPost>>(initialList)
-    val feedPosts: LiveData<List<FeedPost>> = _feedPosts
+    private var savedState: HomeScreenState? = HomeScreenState.Initial
+
+    private val _state = MutableLiveData<HomeScreenState>(HomeScreenState.Posts(initialList))
+    val state: LiveData<HomeScreenState> = _state
+
+    fun showComments(feedPost: FeedPost) {
+        savedState = _state.value
+        _state.value = HomeScreenState.Comments(feedPost = feedPost, comments = comments)
+    }
+
+    fun closeComments() {
+        _state.value = savedState
+    }
 
     fun incrementStatisticItem(post: FeedPost, itemToIncrement: StatisticItem) {
-        val modifiedList = _feedPosts.value?.toMutableList() ?: mutableListOf()
+        val currentState = state.value
+        if (currentState !is HomeScreenState.Posts) return
+        val modifiedList = currentState.posts.toMutableList()
         modifiedList.replaceAll { oldPost ->
             if (post == oldPost) {
                 val oldStatistics = oldPost.statistics
@@ -39,13 +59,16 @@ class MainViewModel : ViewModel() {
                 oldPost
             }
         }
-        _feedPosts.value = modifiedList
+        _state.value = HomeScreenState.Posts(modifiedList)
     }
 
     fun deletePost(post: FeedPost) {
-        val modifiedList = _feedPosts.value?.toMutableList() ?: mutableListOf()
+        val currentState = state.value
+        if (currentState !is HomeScreenState.Posts) return
+
+        val modifiedList = currentState.posts.toMutableList()
         modifiedList.remove(post)
-        _feedPosts.value = modifiedList
+        _state.value = HomeScreenState.Posts(modifiedList)
     }
 
 }
