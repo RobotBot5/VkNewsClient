@@ -4,4 +4,6 @@
     <string name="navigation_item_name">Home</string>
     <string name="navigation_item_favourite">Favourite</string>
     <string name="navigation_item_profile">Profile</string>
+    <string name="button_login">Войти</string>
+    <integer name="com_vk_sdk_AppId">52891436</integer>
 </resources>

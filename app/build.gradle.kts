@@ -64,4 +64,10 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:$nav_version")
 
     implementation("com.google.code.gson:gson:2.11.0")
+
+    implementation("io.coil-kt:coil-compose:2.7.0")
+
+    implementation("com.vk:android-sdk-core:4.1.0")
+    implementation("com.vk:android-sdk-api:4.1.0")
+
 }
