@@ -8,14 +8,15 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class FeedPost(
-    val id: String,
+    val id: Long,
+    val communityId: Long,
     val communityTitle: String,
     val communityImageUrl: String,
     val publicationDate: String,
     val contentText: String,
     val contentImageUrl: String?,
     val statistics: List<StatisticItem>,
-    val isFavourite: Boolean
+    val isLiked: Boolean
 ) : Parcelable {
 
     companion object {
