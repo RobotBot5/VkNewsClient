@@ -1,4 +1,4 @@
-package com.robotbot.vknewsclient
+package com.robotbot.vknewsclient.presentation.comments
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

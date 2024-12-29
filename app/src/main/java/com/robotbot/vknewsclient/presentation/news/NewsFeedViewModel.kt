@@ -1,11 +1,10 @@
-package com.robotbot.vknewsclient
+package com.robotbot.vknewsclient.presentation.news
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.robotbot.vknewsclient.domain.FeedPost
 import com.robotbot.vknewsclient.domain.StatisticItem
-import com.robotbot.vknewsclient.ui.theme.NewsFeedScreenState
 
 class NewsFeedViewModel : ViewModel() {
 

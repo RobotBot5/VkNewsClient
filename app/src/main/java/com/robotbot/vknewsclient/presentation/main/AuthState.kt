@@ -1,4 +1,4 @@
-package com.robotbot.vknewsclient.ui.theme
+package com.robotbot.vknewsclient.presentation.main
 
 sealed interface AuthState {
 

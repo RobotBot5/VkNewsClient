@@ -1,4 +1,4 @@
-package com.robotbot.vknewsclient.ui.theme
+package com.robotbot.vknewsclient.presentation.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -1,4 +1,4 @@
-package com.robotbot.vknewsclient.ui.theme
+package com.robotbot.vknewsclient.samples
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult

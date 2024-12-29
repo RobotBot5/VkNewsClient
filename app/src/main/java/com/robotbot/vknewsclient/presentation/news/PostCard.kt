@@ -1,4 +1,4 @@
-package com.robotbot.vknewsclient.ui.theme
+package com.robotbot.vknewsclient.presentation.news
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
