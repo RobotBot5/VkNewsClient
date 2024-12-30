@@ -40,6 +40,15 @@ class NewsFeedRepository(application: Application) {
         return feedPosts
     }
 
+    suspend fun deletePost(post: FeedPost) {
+        apiService.deletePost(
+            token = getAccessToken(),
+            ownerId = post.communityId,
+            postId = post.id
+        )
+        _feedPosts.remove(post)
+    }
+
     private fun getAccessToken(): String {
         return token?.accessToken ?: throw IllegalStateException("Token is null")
     }
