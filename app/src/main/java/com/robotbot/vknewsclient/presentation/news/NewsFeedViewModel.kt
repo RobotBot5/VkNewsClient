@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.robotbot.vknewsclient.data.repository.NewsFeedRepository
 import com.robotbot.vknewsclient.domain.FeedPost
 import com.robotbot.vknewsclient.domain.StatisticItem
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class NewsFeedViewModel(application: Application) : AndroidViewModel(application) {
@@ -26,6 +27,14 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
             val feedPosts = repository.loadWall()
             _state.value = NewsFeedScreenState.Posts(posts = feedPosts)
         }
+    }
+
+    fun loadNextWall() {
+        _state.value = NewsFeedScreenState.Posts(
+            posts = repository.feedPosts,
+            nextDataIsLoading = true
+        )
+        loadWall()
     }
 
     fun changeLikeStatus(feedPost: FeedPost) {

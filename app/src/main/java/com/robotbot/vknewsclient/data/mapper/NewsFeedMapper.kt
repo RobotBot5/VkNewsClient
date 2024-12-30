@@ -20,7 +20,6 @@ class NewsFeedMapper {
 
         for (post in posts) {
             val group = groups.find { it.id == post.communityId.absoluteValue } ?: continue
-            Log.d("NewsFeedMapper", post.toString())
             val feedPost = FeedPost(
                 id = post.id,
                 communityId = post.communityId,

@@ -1,6 +1,7 @@
 package com.robotbot.vknewsclient.data.repository
 
 import android.app.Application
+import android.util.Log
 import com.robotbot.vknewsclient.data.mapper.NewsFeedMapper
 import com.robotbot.vknewsclient.data.network.ApiFactory
 import com.robotbot.vknewsclient.domain.FeedPost
@@ -21,11 +22,22 @@ class NewsFeedRepository(application: Application) {
     val feedPosts: List<FeedPost>
         get() = _feedPosts.toList()
 
+    private var nextFrom: String? = null
+
     suspend fun loadWall(): List<FeedPost> {
-        val response = apiService.loadWall(getAccessToken())
+        val startFrom = nextFrom
+
+        if (startFrom == null && feedPosts.isNotEmpty()) return feedPosts
+
+        val response = if (startFrom == null) {
+            apiService.loadWall(getAccessToken())
+        } else {
+            apiService.loadWall(getAccessToken(), startFrom)
+        }
         val posts = mapper.mapResponseToPost(response)
         _feedPosts.addAll(posts)
-        return posts
+        nextFrom = response.newsFeedContent.nextFrom
+        return feedPosts
     }
 
     private fun getAccessToken(): String {

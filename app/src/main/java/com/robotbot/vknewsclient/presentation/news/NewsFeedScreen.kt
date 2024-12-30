@@ -2,19 +2,26 @@ package com.robotbot.vknewsclient.presentation.news
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.robotbot.vknewsclient.domain.FeedPost
+import com.robotbot.vknewsclient.ui.theme.DarkBlue
 
 @Composable
 fun NewsFeedScreen(
@@ -30,6 +37,7 @@ fun NewsFeedScreen(
                 viewModel = viewModel,
                 paddingValues = paddingValues,
                 posts = state.posts,
+                nextDataIsLoading = state.nextDataIsLoading,
                 onCommentClickListener = onCommentClickListener
             )
         }
@@ -45,6 +53,7 @@ private fun FeedPosts(
     viewModel: NewsFeedViewModel,
     paddingValues: PaddingValues,
     posts: List<FeedPost>,
+    nextDataIsLoading: Boolean,
     onCommentClickListener: (FeedPost) -> Unit
 ) {
     LazyColumn(
@@ -84,6 +93,22 @@ private fun FeedPosts(
                         viewModel.changeLikeStatus(feedPost = post)
                     }
                 )
+            }
+        }
+        item {
+            if (nextDataIsLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = DarkBlue)
+                }
+            } else {
+                SideEffect {
+                    viewModel.loadNextWall()
+                }
             }
         }
     }

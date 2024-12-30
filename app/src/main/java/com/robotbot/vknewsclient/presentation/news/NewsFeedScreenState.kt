@@ -6,6 +6,9 @@ sealed interface NewsFeedScreenState {
 
     data object Initial : NewsFeedScreenState
 
-    data class Posts(val posts: List<FeedPost>) : NewsFeedScreenState
+    data class Posts(
+        val posts: List<FeedPost>,
+        val nextDataIsLoading: Boolean = false
+    ) : NewsFeedScreenState
 
 }
