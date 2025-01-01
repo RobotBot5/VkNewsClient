@@ -16,6 +16,7 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +31,7 @@ fun NewsFeedScreen(
     onCommentClickListener: (FeedPost) -> Unit
 ) {
     val viewModel: NewsFeedViewModel = viewModel()
-    val screenState = viewModel.state.observeAsState(NewsFeedScreenState.Initial)
+    val screenState = viewModel.state.collectAsState(NewsFeedScreenState.Initial)
 
     when(val state = screenState.value) {
         is NewsFeedScreenState.Posts -> {
