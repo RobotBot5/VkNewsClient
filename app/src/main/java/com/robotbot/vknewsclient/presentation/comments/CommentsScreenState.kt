@@ -1,7 +1,7 @@
 package com.robotbot.vknewsclient.presentation.comments
 
-import com.robotbot.vknewsclient.domain.FeedPost
-import com.robotbot.vknewsclient.domain.PostComment
+import com.robotbot.vknewsclient.domain.entity.FeedPost
+import com.robotbot.vknewsclient.domain.entity.PostComment
 
 sealed interface CommentsScreenState {
 

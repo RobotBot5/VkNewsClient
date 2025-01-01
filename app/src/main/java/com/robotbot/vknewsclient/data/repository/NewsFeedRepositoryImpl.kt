@@ -3,18 +3,18 @@ package com.robotbot.vknewsclient.data.repository
 import android.app.Application
 import com.robotbot.vknewsclient.data.mapper.NewsFeedMapper
 import com.robotbot.vknewsclient.data.network.ApiFactory
-import com.robotbot.vknewsclient.domain.FeedPost
-import com.robotbot.vknewsclient.domain.PostComment
-import com.robotbot.vknewsclient.domain.StatisticItem
-import com.robotbot.vknewsclient.domain.StatisticType
+import com.robotbot.vknewsclient.domain.entity.AuthState
+import com.robotbot.vknewsclient.domain.entity.FeedPost
+import com.robotbot.vknewsclient.domain.entity.PostComment
+import com.robotbot.vknewsclient.domain.entity.StatisticItem
+import com.robotbot.vknewsclient.domain.entity.StatisticType
+import com.robotbot.vknewsclient.domain.repository.NewsFeedRepository
 import com.robotbot.vknewsclient.extentions.mergeWith
-import com.robotbot.vknewsclient.domain.AuthState
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
 
-class NewsFeedRepository(application: Application) {
+class NewsFeedRepositoryImpl(application: Application) : NewsFeedRepository {
 
     private val storage = VKPreferencesKeyValueStorage(application)
     private val token
@@ -70,7 +70,7 @@ class NewsFeedRepository(application: Application) {
 
     private val checkAuthStateEvents = MutableSharedFlow<Unit>(replay = 1)
 
-    val authStateFlow = flow {
+    private val authStateFlow = flow {
         checkAuthStateEvents.emit(Unit)
         checkAuthStateEvents.collect {
             val currentToken = token
@@ -84,11 +84,11 @@ class NewsFeedRepository(application: Application) {
         initialValue = AuthState.Initial
     )
 
-    suspend fun checkAuthState() {
+    override suspend fun checkAuthState() {
         checkAuthStateEvents.emit(Unit)
     }
 
-    val wall: StateFlow<List<FeedPost>> = loadedListFlow
+    private val wall: StateFlow<List<FeedPost>> = loadedListFlow
         .mergeWith(refreshedListFlow)
         .stateIn(
             scope = coroutineScope,
@@ -96,11 +96,15 @@ class NewsFeedRepository(application: Application) {
             initialValue = feedPosts
         )
 
-    suspend fun loadNextData() {
+    override fun getAuthStateFlow(): StateFlow<AuthState> = authStateFlow
+
+    override fun getWall(): StateFlow<List<FeedPost>> = wall
+
+    override suspend fun loadNextData() {
         nextDataNeededEvents.emit(Unit)
     }
 
-    fun getComments(post: FeedPost): Flow<List<PostComment>> = flow {
+    override fun getComments(post: FeedPost): StateFlow<List<PostComment>> = flow {
         val comments = apiService.getComments(
             token = getAccessToken(),
             ownerId = post.communityId,
@@ -110,9 +114,13 @@ class NewsFeedRepository(application: Application) {
     }.retry {
         delay(RETRY_TIMEOUT_MILLIS)
         true
-    }
+    }.stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.Lazily,
+        initialValue = listOf()
+    )
 
-    suspend fun deletePost(post: FeedPost) {
+    override suspend fun deletePost(post: FeedPost) {
         apiService.deletePost(
             token = getAccessToken(),
             ownerId = post.communityId,
@@ -126,7 +134,7 @@ class NewsFeedRepository(application: Application) {
         return token?.accessToken ?: throw IllegalStateException("Token is null")
     }
 
-    suspend fun changeLikeStatus(feedPost: FeedPost) {
+    override suspend fun changeLikeStatus(feedPost: FeedPost) {
         val response = if (feedPost.isLiked) {
             apiService.deleteLike(
                 token = getAccessToken(),

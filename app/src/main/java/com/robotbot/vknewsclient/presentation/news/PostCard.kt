@@ -27,9 +27,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.robotbot.vknewsclient.R
-import com.robotbot.vknewsclient.domain.FeedPost
-import com.robotbot.vknewsclient.domain.StatisticItem
-import com.robotbot.vknewsclient.domain.StatisticType
+import com.robotbot.vknewsclient.domain.entity.FeedPost
+import com.robotbot.vknewsclient.domain.entity.StatisticItem
+import com.robotbot.vknewsclient.domain.entity.StatisticType
 import com.robotbot.vknewsclient.ui.theme.DarkRed
 import java.util.Locale
 

@@ -1,6 +1,6 @@
 package com.robotbot.vknewsclient.presentation.news
 
-import com.robotbot.vknewsclient.domain.FeedPost
+import com.robotbot.vknewsclient.domain.entity.FeedPost
 
 sealed interface NewsFeedScreenState {
 

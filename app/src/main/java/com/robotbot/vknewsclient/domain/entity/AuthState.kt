@@ -1,4 +1,4 @@
-package com.robotbot.vknewsclient.domain
+package com.robotbot.vknewsclient.domain.entity
 
 sealed interface AuthState {
 

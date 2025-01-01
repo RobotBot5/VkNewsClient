@@ -1,4 +1,4 @@
-package com.robotbot.vknewsclient.domain
+package com.robotbot.vknewsclient.domain.entity
 
 data class PostComment(
     val id: Long,

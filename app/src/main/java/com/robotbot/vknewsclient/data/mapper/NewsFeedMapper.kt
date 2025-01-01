@@ -2,10 +2,10 @@ package com.robotbot.vknewsclient.data.mapper
 
 import com.robotbot.vknewsclient.data.model.CommentsResponseDto
 import com.robotbot.vknewsclient.data.model.NewsFeedResponseDto
-import com.robotbot.vknewsclient.domain.FeedPost
-import com.robotbot.vknewsclient.domain.PostComment
-import com.robotbot.vknewsclient.domain.StatisticItem
-import com.robotbot.vknewsclient.domain.StatisticType
+import com.robotbot.vknewsclient.domain.entity.FeedPost
+import com.robotbot.vknewsclient.domain.entity.PostComment
+import com.robotbot.vknewsclient.domain.entity.StatisticItem
+import com.robotbot.vknewsclient.domain.entity.StatisticType
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

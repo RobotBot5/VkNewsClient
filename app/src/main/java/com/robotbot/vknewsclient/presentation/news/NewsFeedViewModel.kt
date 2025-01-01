@@ -3,17 +3,16 @@ package com.robotbot.vknewsclient.presentation.news
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.robotbot.vknewsclient.data.repository.NewsFeedRepository
-import com.robotbot.vknewsclient.domain.FeedPost
-import com.robotbot.vknewsclient.domain.StatisticItem
+import com.robotbot.vknewsclient.data.repository.NewsFeedRepositoryImpl
+import com.robotbot.vknewsclient.domain.entity.FeedPost
+import com.robotbot.vknewsclient.domain.usecases.ChangeLikeStatusUseCase
+import com.robotbot.vknewsclient.domain.usecases.DeletePostUseCase
+import com.robotbot.vknewsclient.domain.usecases.GetWallUseCase
+import com.robotbot.vknewsclient.domain.usecases.LoadNextDataUseCase
 import com.robotbot.vknewsclient.extentions.mergeWith
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -25,9 +24,14 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
     private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
         Log.d("NewsFeedViewModel", "Exception caught by exception handler")
     }
-    private val repository = NewsFeedRepository(application)
+    private val repository = NewsFeedRepositoryImpl(application)
 
-    private val wallFlow = repository.wall
+    private val getWallUseCase = GetWallUseCase(repository)
+    private val loadNextDataUseCase = LoadNextDataUseCase(repository)
+    private val changeLikeStatusUseCase = ChangeLikeStatusUseCase(repository)
+    private val deletePostUseCase = DeletePostUseCase(repository)
+
+    private val wallFlow = getWallUseCase()
 
     private val loadNextDataEvents = MutableSharedFlow<Unit>()
     private val loadNextDataFlow = flow {
@@ -50,19 +54,19 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
     fun loadNextWall() {
         viewModelScope.launch {
             loadNextDataEvents.emit(Unit)
-            repository.loadNextData()
+            loadNextDataUseCase()
         }
     }
 
     fun changeLikeStatus(feedPost: FeedPost) {
         viewModelScope.launch(exceptionHandler) {
-            repository.changeLikeStatus(feedPost)
+            changeLikeStatusUseCase(feedPost)
         }
     }
 
     fun deletePost(post: FeedPost) {
         viewModelScope.launch(exceptionHandler) {
-            repository.deletePost(post)
+            deletePostUseCase(post)
         }
     }
 

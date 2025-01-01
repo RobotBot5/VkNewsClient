@@ -2,7 +2,7 @@ package com.robotbot.vknewsclient.navigation
 
 import android.net.Uri
 import com.google.gson.Gson
-import com.robotbot.vknewsclient.domain.FeedPost
+import com.robotbot.vknewsclient.domain.entity.FeedPost
 
 sealed class Screen(
     val route: String
