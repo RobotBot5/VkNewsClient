@@ -1,6 +1,7 @@
 package com.robotbot.vknewsclient.presentation.news
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,6 +10,7 @@ import com.robotbot.vknewsclient.data.repository.NewsFeedRepository
 import com.robotbot.vknewsclient.domain.FeedPost
 import com.robotbot.vknewsclient.domain.StatisticItem
 import com.robotbot.vknewsclient.extentions.mergeWith
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
@@ -20,6 +22,9 @@ import kotlinx.coroutines.launch
 
 class NewsFeedViewModel(application: Application) : AndroidViewModel(application) {
 
+    private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
+        Log.d("NewsFeedViewModel", "Exception caught by exception handler")
+    }
     private val repository = NewsFeedRepository(application)
 
     private val wallFlow = repository.wall
@@ -50,13 +55,13 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun changeLikeStatus(feedPost: FeedPost) {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             repository.changeLikeStatus(feedPost)
         }
     }
 
     fun deletePost(post: FeedPost) {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             repository.deletePost(post)
         }
     }
