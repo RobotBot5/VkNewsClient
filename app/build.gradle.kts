@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -72,5 +73,12 @@ dependencies {
 
     implementation("com.vk:android-sdk-core:4.1.0")
     implementation("com.vk:android-sdk-api:4.1.0")
+
+    //Dagger2
+    implementation(libs.dagger2)
+//Dagger2 кодогенератор
+    ksp(libs.dagger2.compiler)
+//Dagger2 аннотации
+    ksp(libs.dagger2.android.processor)
 
 }

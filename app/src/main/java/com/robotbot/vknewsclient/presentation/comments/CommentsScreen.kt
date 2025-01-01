@@ -1,6 +1,5 @@
 package com.robotbot.vknewsclient.presentation.comments
 
-import android.app.Application
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,10 +23,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,21 +35,35 @@ import coil.compose.AsyncImage
 import com.robotbot.vknewsclient.R
 import com.robotbot.vknewsclient.domain.entity.FeedPost
 import com.robotbot.vknewsclient.domain.entity.PostComment
+import com.robotbot.vknewsclient.presentation.getApplicationComponent
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentsScreen(
     feedPost: FeedPost,
-    paddingValuesFromMainScreen: PaddingValues,
+//    paddingValuesFromMainScreen: PaddingValues,
     onBackPressed: () -> Unit
 ) {
+    val component = getApplicationComponent()
+            .getCommentsScreenComponentFactory()
+            .create(feedPost)
     val viewModel: CommentsViewModel = viewModel(
-        factory = CommentsViewModelFactory(
-            feedPost = feedPost,
-            application = LocalContext.current.applicationContext as Application
-        )
+        factory = component.getViewModelFactory()
     )
     val screenState = viewModel.screenState.collectAsState(CommentsScreenState.Initial)
+    CommentsScreenContent(
+        screenState = screenState,
+//        paddingValuesFromMainScreen = paddingValuesFromMainScreen,
+        onBackPressed = onBackPressed
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CommentsScreenContent(
+    screenState: State<CommentsScreenState>,
+//    paddingValuesFromMainScreen: PaddingValues,
+    onBackPressed: () -> Unit
+) {
     val currentState = screenState.value
 
     if (currentState is CommentsScreenState.Comments) {
@@ -74,7 +87,7 @@ fun CommentsScreen(
             LazyColumn(
                 modifier = Modifier.padding(
                     top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValuesFromMainScreen.calculateBottomPadding(),
+//                    bottom = paddingValuesFromMainScreen.calculateBottomPadding(),
                     start = 8.dp,
                     end = 8.dp
                 ),

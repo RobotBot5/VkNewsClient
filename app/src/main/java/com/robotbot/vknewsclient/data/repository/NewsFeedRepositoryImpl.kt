@@ -1,8 +1,7 @@
 package com.robotbot.vknewsclient.data.repository
 
-import android.app.Application
 import com.robotbot.vknewsclient.data.mapper.NewsFeedMapper
-import com.robotbot.vknewsclient.data.network.ApiFactory
+import com.robotbot.vknewsclient.data.network.ApiService
 import com.robotbot.vknewsclient.domain.entity.AuthState
 import com.robotbot.vknewsclient.domain.entity.FeedPost
 import com.robotbot.vknewsclient.domain.entity.PostComment
@@ -22,10 +21,14 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
-class NewsFeedRepositoryImpl(application: Application) : NewsFeedRepository {
+class NewsFeedRepositoryImpl @Inject constructor(
+    private val apiService: ApiService,
+    private val mapper: NewsFeedMapper,
+    private val storage: VKPreferencesKeyValueStorage
+) : NewsFeedRepository {
 
-    private val storage = VKPreferencesKeyValueStorage(application)
     private val token
         get() = VKAccessToken.restore(storage)
 
@@ -58,9 +61,6 @@ class NewsFeedRepositoryImpl(application: Application) : NewsFeedRepository {
     }.catch {
 
     }
-
-    private val apiService = ApiFactory.apiService
-    private val mapper = NewsFeedMapper()
 
     private val _feedPosts = mutableListOf<FeedPost>()
     private val feedPosts: List<FeedPost>

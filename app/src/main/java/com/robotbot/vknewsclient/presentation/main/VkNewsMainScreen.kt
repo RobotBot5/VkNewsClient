@@ -84,7 +84,7 @@ fun MainScreen() {
             },
             commentsScreenContent = { feedPost ->
                 CommentsScreen(
-                    paddingValuesFromMainScreen = paddingValues,
+//                    paddingValuesFromMainScreen = paddingValues,
                     feedPost = feedPost,
                     onBackPressed = { navigationState.navHostController.popBackStack() }
                 )

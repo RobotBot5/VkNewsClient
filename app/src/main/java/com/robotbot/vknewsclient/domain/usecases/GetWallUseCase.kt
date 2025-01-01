@@ -3,8 +3,9 @@ package com.robotbot.vknewsclient.domain.usecases
 import com.robotbot.vknewsclient.domain.entity.FeedPost
 import com.robotbot.vknewsclient.domain.repository.NewsFeedRepository
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
-class GetWallUseCase(
+class GetWallUseCase @Inject constructor(
     private val repository: NewsFeedRepository
 ) {
 
