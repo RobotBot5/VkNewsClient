@@ -1,5 +1,6 @@
 package com.robotbot.vknewsclient.data.network
 
+import com.robotbot.vknewsclient.data.model.CommentsResponseDto
 import com.robotbot.vknewsclient.data.model.LikesCountResponseDto
 import com.robotbot.vknewsclient.data.model.NewsFeedResponseDto
 import retrofit2.http.GET
@@ -38,4 +39,11 @@ interface ApiService {
         @Query("owner_id") ownerId: Long,
         @Query("item_id") postId: Long
     ) : LikesCountResponseDto
+
+    @GET("wall.getComments?v=5.199&extended=1&fields=photo_100")
+    suspend fun getComments(
+        @Query("access_token") token: String,
+        @Query("owner_id") ownerId: Long,
+        @Query("post_id") postId: Long
+    ) : CommentsResponseDto
 }

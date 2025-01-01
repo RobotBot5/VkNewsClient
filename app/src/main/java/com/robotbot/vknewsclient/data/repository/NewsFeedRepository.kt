@@ -5,6 +5,7 @@ import android.util.Log
 import com.robotbot.vknewsclient.data.mapper.NewsFeedMapper
 import com.robotbot.vknewsclient.data.network.ApiFactory
 import com.robotbot.vknewsclient.domain.FeedPost
+import com.robotbot.vknewsclient.domain.PostComment
 import com.robotbot.vknewsclient.domain.StatisticItem
 import com.robotbot.vknewsclient.domain.StatisticType
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
@@ -25,6 +26,7 @@ class NewsFeedRepository(application: Application) {
     private var nextFrom: String? = null
 
     suspend fun loadWall(): List<FeedPost> {
+        Log.d("TEST", getAccessToken())
         val startFrom = nextFrom
 
         if (startFrom == null && feedPosts.isNotEmpty()) return feedPosts
@@ -38,6 +40,15 @@ class NewsFeedRepository(application: Application) {
         _feedPosts.addAll(posts)
         nextFrom = response.newsFeedContent.nextFrom
         return feedPosts
+    }
+
+    suspend fun getComments(post: FeedPost): List<PostComment> {
+        val comments = apiService.getComments(
+            token = getAccessToken(),
+            ownerId = post.communityId,
+            postId = post.id
+        )
+        return mapper.mapResponseToComments(comments)
     }
 
     suspend fun deletePost(post: FeedPost) {

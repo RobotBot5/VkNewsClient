@@ -1,8 +1,9 @@
 package com.robotbot.vknewsclient.data.mapper
 
-import android.util.Log
+import com.robotbot.vknewsclient.data.model.CommentsResponseDto
 import com.robotbot.vknewsclient.data.model.NewsFeedResponseDto
 import com.robotbot.vknewsclient.domain.FeedPost
+import com.robotbot.vknewsclient.domain.PostComment
 import com.robotbot.vknewsclient.domain.StatisticItem
 import com.robotbot.vknewsclient.domain.StatisticType
 import java.text.SimpleDateFormat
@@ -39,6 +40,28 @@ class NewsFeedMapper {
             result.add(feedPost)
         }
 
+        return result
+    }
+
+    fun mapResponseToComments(response: CommentsResponseDto): List<PostComment> {
+        val result = mutableListOf<PostComment>()
+
+        val authors = response.commentsContent.authors
+        val comments = response.commentsContent.comments
+
+        for (comment in comments) {
+            if (comment.text.isBlank()) continue
+            val author = authors.find { it.id == comment.authorId } ?: continue
+
+            val postComment = PostComment(
+                id = comment.id,
+                authorName = "${author.firstName} ${author.lastName}",
+                authorAvatarUrl = author.avatarUrl,
+                commentText = comment.text,
+                publicationDate = mapTimestampToDate(comment.date * 1000)
+            )
+            result.add(postComment)
+        }
         return result
     }
 
